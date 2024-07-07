@@ -1,13 +1,13 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { WordService } from './app.service';
 import { Word } from './wordType';
 
 @Controller('words')
 export class WordController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly wordService: WordService) {}
 
   @Get()
-  getAllWords(): Word[] {
-    return [];
+  getAllUserWords(): Word[] {
+    return this.wordService.getAllWords();
   }
 }
