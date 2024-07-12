@@ -34,6 +34,16 @@ export const user: User = {
           word: 'Bread',
           translation: 'Chleb',
         },
+        {
+          id: 1,
+          word: 'xd',
+          translation: 'xddd',
+        },
+        {
+          id: 1,
+          word: 'sadasdas',
+          translation: 'xddd',
+        },
       ],
     },
   ],

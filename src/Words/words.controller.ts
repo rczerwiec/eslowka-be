@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
-import { WordService } from './app.service';
-import { Word } from './wordType';
+import { WordService } from './words.service';
+import { Word } from '../wordType';
 
 @Controller('words')
 export class WordController {

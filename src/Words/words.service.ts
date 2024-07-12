@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { user, Word } from './wordType';
+import { user, Word } from '../wordType';
 
 @Injectable()
 export class WordService {

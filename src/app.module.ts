@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
-import { WordController } from './app.controller';
-import { WordService } from './app.service';
+import { FoldersModule } from './Folders/folders.module';
+import { WordsModule } from './Words/words.module';
 
 @Module({
-  imports: [],
-  controllers: [WordController],
-  providers: [WordService],
+  imports: [FoldersModule, WordsModule],
 })
 export class AppModule {}
