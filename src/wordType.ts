@@ -46,5 +46,32 @@ export const user: User = {
         },
       ],
     },
+    {
+      id: 1,
+      folderName: 'Zwierzęta',
+      words: [
+        {
+          id: 0,
+          word: 'Koń',
+          translation: 'Horse',
+        },
+        {
+          id: 1,
+          word: 'Dog',
+          translation: 'Pies',
+        },
+      ],
+    },
+    {
+      id: 2,
+      folderName: 'Owoce',
+      words: [
+        {
+          id: 0,
+          word: 'Apple',
+          translation: 'Jabłko',
+        },
+      ],
+    },
   ],
 };
