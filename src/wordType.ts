@@ -39,7 +39,6 @@ export const user: User = {
           word: 'Butter',
           translation: 'Masło',
         },
-
       ],
     },
     {
