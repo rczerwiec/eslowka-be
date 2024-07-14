@@ -35,15 +35,11 @@ export const user: User = {
           translation: 'Chleb',
         },
         {
-          id: 1,
-          word: 'xd',
-          translation: 'xddd',
+          id: 2,
+          word: 'Butter',
+          translation: 'Masło',
         },
-        {
-          id: 1,
-          word: 'sadasdas',
-          translation: 'xddd',
-        },
+
       ],
     },
     {
@@ -59,6 +55,11 @@ export const user: User = {
           id: 1,
           word: 'Dog',
           translation: 'Pies',
+        },
+        {
+          id: 2,
+          word: 'Pig',
+          translation: 'Świnia',
         },
       ],
     },

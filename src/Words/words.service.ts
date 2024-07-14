@@ -10,4 +10,17 @@ export class WordService {
   getSpecificFolderWords(folderId: number): Word[] {
     return user.folders[folderId].words;
   }
+
+  addWord(word: Partial<Word>, folderId: string): Word | any {
+    const newID =
+      user.folders[folderId].words[user.folders[folderId].words.length - 1].id +
+      1;
+
+    const newWord: Word = {
+      id: newID,
+      word: word.word,
+      translation: word.translation,
+    };
+    user.folders[folderId].words.push(newWord);
+  }
 }

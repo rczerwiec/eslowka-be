@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { WordService } from './words.service';
 import { Word } from '../wordType';
 
@@ -15,5 +15,15 @@ export class WordController {
     const FolderID = +folderId;
 
     return this.wordService.getSpecificFolderWords(FolderID);
+  }
+
+  @Post(':folderId')
+  addWord(
+    @Param('folderId') folderId: string,
+    @Body() word: Partial<Word>,
+  ): Word {
+    const wordData = word;
+    if (!word.translation || !word.word) return undefined;
+    return this.wordService.addWord(wordData, folderId);
   }
 }
