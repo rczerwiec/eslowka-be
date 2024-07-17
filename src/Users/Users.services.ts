@@ -37,7 +37,7 @@ export class UserService {
       .findByIdAndUpdate(
         id,
         { $push: { 'folders.$[item].words': newWord } },
-        { arrayFilters: [{ 'item.id': { $in: newWord.id } }] },
+        { arrayFilters: [{ 'item.id': { $in: newWord.folderId } }] },
       )
       .then(() => {
         console.log('Pomyślnie dodano słowo!');

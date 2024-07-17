@@ -37,6 +37,29 @@ export class UsersController {
     return findUser;
   }
 
+  @Get(':id/folders')
+  async getUserFolders(@Param('id') id: string) {
+    const isValid = mongoose.Types.ObjectId.isValid(id);
+    if (!isValid) throw new HttpException(`User not found (valid id)`, 404);
+
+    const findUser = await this.usersService.getUserById(id);
+    if (!findUser) throw new HttpException('User not found', 404);
+    return findUser.folders;
+  }
+
+  @Get(':id/folders/:folderId/words')
+  async getUserFolderWords(
+    @Param('id') id: string,
+    @Param('folderId') folderId: string,
+  ) {
+    const isValid = mongoose.Types.ObjectId.isValid(id);
+    if (!isValid) throw new HttpException(`User not found (valid id)`, 404);
+
+    const findUser = await this.usersService.getUserById(id);
+    if (!findUser) throw new HttpException('User not found', 404);
+    return findUser.folders[folderId].words;
+  }
+
   @Patch(':id')
   createUserFolder(
     @Param('id') id: string,
