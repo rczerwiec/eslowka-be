@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   Param,
@@ -57,6 +58,9 @@ export class UsersController {
 
     const findUser = await this.usersService.getUserById(id);
     if (!findUser) throw new HttpException('User not found', 404);
+    if (!findUser.folders[folderId].words === undefined) {
+      return [];
+    }
     return findUser.folders[folderId].words;
   }
 
@@ -80,5 +84,16 @@ export class UsersController {
     const isValid = mongoose.Types.ObjectId.isValid(id);
     if (!isValid) throw new HttpException(`User not found (valid id)`, 404);
     return this.usersService.createUserFolderWord(id, newWordDto);
+  }
+
+  @Delete(':id/word')
+  deleteUserFolderWord(
+    @Param('id') id: string,
+    @Body() wordToDelete: CreateWordDto,
+  ) {
+    const isValid = mongoose.Types.ObjectId.isValid(id);
+    if (!isValid) throw new HttpException(`User not found (valid id)`, 404);
+
+    return this.usersService.deleteUserFolderWord(id, wordToDelete);
   }
 }

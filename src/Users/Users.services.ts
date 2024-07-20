@@ -43,6 +43,23 @@ export class UserService {
         console.log('Pomyślnie dodano słowo!');
       });
   }
+
+  deleteUserFolderWord(id: string, wordToDelete: CreateWordDto) {
+    console.log(id, wordToDelete);
+
+    this.userModel
+      .findByIdAndUpdate(
+        id,
+        { $pull: { 'folders.$[item].words': wordToDelete } },
+        { arrayFilters: [{ 'item.id': { $in: wordToDelete.folderId } }] },
+      )
+      .then(() => {
+        console.log('Pomyślnie dodano słowo!');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 }
 
 // {_id: "class_a", students: {$elemMatch: {_id: {$in: ["1a", "1b"]}}}},
