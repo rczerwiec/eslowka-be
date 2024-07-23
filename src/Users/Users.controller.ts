@@ -86,6 +86,17 @@ export class UsersController {
     return this.usersService.createUserFolderWord(id, newWordDto);
   }
 
+  @Patch(':id/words')
+  createUserFolderWords(
+    @Param('id') id: string,
+    @Body() newWordsDto: CreateWordDto[],
+  ) {
+    console.log(newWordsDto);
+    const isValid = mongoose.Types.ObjectId.isValid(id);
+    if (!isValid) throw new HttpException(`User not found (valid id)`, 404);
+    return this.usersService.createUserFolderWords(id, newWordsDto);
+  }
+
   @Delete(':id/word')
   deleteUserFolderWord(
     @Param('id') id: string,

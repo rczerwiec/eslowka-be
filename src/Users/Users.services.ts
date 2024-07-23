@@ -44,6 +44,28 @@ export class UserService {
       });
   }
 
+  createUserFolderWords(id: string, newWords: CreateWordDto[]) {
+    console.log(newWords);
+
+    this.userModel
+      .findByIdAndUpdate(
+        id,
+        {
+          $push: {
+            'folders.$[item].words': {
+              $each: newWords.map((word) => {
+                return word;
+              }),
+            },
+          },
+        },
+        { arrayFilters: [{ 'item.id': { $in: newWords[0].folderId } }] },
+      )
+      .then(() => {
+        console.log('Pomyślnie dodano słowa!');
+      });
+  }
+
   deleteUserFolderWord(id: string, wordToDelete: CreateWordDto) {
     console.log(id, wordToDelete);
 
