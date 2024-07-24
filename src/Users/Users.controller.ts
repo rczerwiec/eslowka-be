@@ -83,7 +83,19 @@ export class UsersController {
     console.log(newWordDto);
     const isValid = mongoose.Types.ObjectId.isValid(id);
     if (!isValid) throw new HttpException(`User not found (valid id)`, 404);
+    if (newWordDto.word == '' || newWordDto.translation == '')
+      throw new HttpException(`Empty data`, 999);
     return this.usersService.createUserFolderWord(id, newWordDto);
+  }
+
+  @Patch(':id/word/status')
+  updateWordStatus(@Param('id') id: string, @Body() newWordDto: CreateWordDto) {
+    console.log(newWordDto);
+    const isValid = mongoose.Types.ObjectId.isValid(id);
+    if (!isValid) throw new HttpException(`User not found (valid id)`, 404);
+    if (newWordDto.word == '' || newWordDto.translation == '')
+      throw new HttpException(`Empty data`, 999);
+    return this.usersService.updateWord(id, newWordDto);
   }
 
   @Patch(':id/words')

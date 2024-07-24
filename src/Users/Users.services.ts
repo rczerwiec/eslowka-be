@@ -45,17 +45,20 @@ export class UserService {
   }
 
   createUserFolderWords(id: string, newWords: CreateWordDto[]) {
-    console.log(newWords);
-
     this.userModel
       .findByIdAndUpdate(
         id,
         {
           $push: {
             'folders.$[item].words': {
-              $each: newWords.map((word) => {
-                return word;
-              }),
+              $each: newWords
+                .filter((word) => {
+                  if (word.translation == '' || word.word == '') return false;
+                  return true;
+                })
+                .map((word) => {
+                  return word;
+                }),
             },
           },
         },
@@ -63,6 +66,33 @@ export class UserService {
       )
       .then(() => {
         console.log('Pomyślnie dodano słowa!');
+      });
+  }
+
+  updateWord(id: string, newWordDto: CreateWordDto) {
+    console.log(id, newWordDto.known);
+
+    this.userModel
+      .findByIdAndUpdate(
+        id,
+        {
+          $set: {
+            'folders.$[e1].words.$[e2].known': newWordDto.known,
+          },
+        },
+        {
+          arrayFilters: [
+            { 'e1.id': newWordDto.folderId },
+            { 'e2.id': newWordDto.id },
+          ],
+          new: true,
+        },
+      )
+      .then(() => {
+        console.log('Pomyślnie zmieniono status!');
+      })
+      .catch((err) => {
+        console.log('BLAD:', err);
       });
   }
 
@@ -76,7 +106,7 @@ export class UserService {
         { arrayFilters: [{ 'item.id': { $in: wordToDelete.folderId } }] },
       )
       .then(() => {
-        console.log('Pomyślnie dodano słowo!');
+        console.log('Pomyślnie usnieto słowo!');
       })
       .catch((err) => {
         console.log(err);

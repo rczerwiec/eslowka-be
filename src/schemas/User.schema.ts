@@ -1,5 +1,38 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IFolder } from './types';
+import { IFolder, IWord } from './types';
+
+@Schema()
+export class WordSchemaDefinition {
+  @Prop({ unique: true })
+  id: number;
+
+  folderId: number;
+
+  word: string;
+
+  translation: string;
+
+  repeated: number;
+
+  known: number;
+
+}
+
+const WordSchema = SchemaFactory.createForClass(WordSchemaDefinition);
+
+@Schema()
+export class FolderSchemaDefinition {
+  @Prop({ unique: true })
+  id: number;
+
+  @Prop({ required: true })
+  folderName: string;
+
+  @Prop({ default: [] })
+  words: [];
+}
+
+const FolderSchema = SchemaFactory.createForClass(FolderSchemaDefinition);
 
 @Schema()
 export class User {
@@ -9,7 +42,7 @@ export class User {
   @Prop({ required: true })
   userName: string;
 
-  @Prop({ default: [] })
+  @Prop([FolderSchema])
   folders: IFolder[];
 }
 
