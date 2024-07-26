@@ -47,6 +47,7 @@ export class UsersController {
     if (!findUser) throw new HttpException('User not found', 404);
     return findUser.folders;
   }
+  
 
   @Get(':id/folders/:folderId/words')
   async getUserFolderWords(
@@ -62,6 +63,38 @@ export class UsersController {
       return [];
     }
     return findUser.folders[folderId].words;
+  }
+
+  @Get(':id/folders/:folderId/randomWords')
+  async getRandomWordsArray(
+    @Param('id') id: string,
+    @Param('folderId') folderId: string,
+  ) {
+    const isValid = mongoose.Types.ObjectId.isValid(id);
+    if (!isValid) throw new HttpException(`User not found (valid id)`, 404);
+
+    const findUser = await this.usersService.getUserById(id);
+    if (!findUser) throw new HttpException('User not found', 404);
+    if (!findUser.folders[folderId].words === undefined) {
+      return [];
+    }
+    // eslint-disable-next-line prefer-const
+    let folderWords = findUser.folders[folderId].words;
+    let currentIndex = folderWords.length;
+
+    while (currentIndex != 0) {
+      // Pick a remaining element...
+      const randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      // And swap it with the current element.
+      [folderWords[currentIndex], folderWords[randomIndex]] = [
+        folderWords[randomIndex],
+        folderWords[currentIndex],
+      ];
+    }
+    console.log(folderWords);
+    return folderWords;
   }
 
   @Patch(':id')
