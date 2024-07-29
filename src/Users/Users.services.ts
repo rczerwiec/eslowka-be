@@ -70,14 +70,13 @@ export class UserService {
   }
 
   updateWord(id: string, newWordDto: CreateWordDto) {
-    console.log(id, newWordDto.known);
-
     this.userModel
       .findByIdAndUpdate(
         id,
         {
           $set: {
             'folders.$[e1].words.$[e2].known': newWordDto.known,
+            'folders.$[e1].words.$[e2].repeated': newWordDto.repeated,
           },
         },
         {

@@ -122,7 +122,7 @@ export class UsersController {
   }
 
   @Patch(':id/word/status')
-  updateWordStatus(@Param('id') id: string, @Body() newWordDto: CreateWordDto) {
+  updateWord(@Param('id') id: string, @Body() newWordDto: CreateWordDto) {
     console.log(newWordDto);
     const isValid = mongoose.Types.ObjectId.isValid(id);
     if (!isValid) throw new HttpException(`User not found (valid id)`, 404);
