@@ -93,8 +93,24 @@ export class UsersController {
         folderWords[currentIndex],
       ];
     }
-    console.log(folderWords);
-    return folderWords;
+    let knownStatus = 0;
+    const newFolders = folderWords
+      .filter((word) => {
+        if (knownStatus >= 3 && word.known === 2) {
+          console.log('false');
+          return false;
+        } else {
+          if (word.known === 2) {
+            knownStatus++;
+          }
+          console.log('true');
+          return true;
+        }
+      })
+      .map((word) => {
+        return word;
+      });
+    return newFolders;
   }
 
   @Patch(':id')

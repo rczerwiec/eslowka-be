@@ -20,4 +20,10 @@ export class CreateWordDto {
 
   @IsNumber()
   known: number;
+
+  @IsNumber()
+  streak: number;
+
+  @IsNumber()
+  reverseStreak: number;
 }

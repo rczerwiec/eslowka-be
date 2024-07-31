@@ -77,6 +77,8 @@ export class UserService {
           $set: {
             'folders.$[e1].words.$[e2].known': newWordDto.known,
             'folders.$[e1].words.$[e2].repeated': newWordDto.repeated,
+            'folders.$[e1].words.$[e2].streak': newWordDto.streak,
+            'folders.$[e1].words.$[e2].reverseStreak': newWordDto.reverseStreak,
           },
         },
         {

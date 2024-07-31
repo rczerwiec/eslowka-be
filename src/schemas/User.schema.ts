@@ -16,6 +16,10 @@ export class WordSchemaDefinition {
 
   known: number;
 
+  streak: number;
+
+  reverseStreak: number;
+
 }
 
 const WordSchema = SchemaFactory.createForClass(WordSchemaDefinition);
