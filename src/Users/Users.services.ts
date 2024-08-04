@@ -6,6 +6,7 @@ import { User } from 'src/schemas/User.schema';
 import { CreateUserDto } from './dto/User.dto';
 import { CreateFolderDto } from './dto/Folder.dto';
 import { CreateWordDto } from './dto/Word.dto';
+import { IUser } from 'src/schemas/types';
 
 @Injectable()
 export class UserService {
@@ -31,8 +32,6 @@ export class UserService {
   }
 
   createUserFolderWord(id: string, newWord: CreateWordDto) {
-    console.log(newWord);
-
     this.userModel
       .findByIdAndUpdate(
         id,
@@ -41,8 +40,42 @@ export class UserService {
       )
       .then(() => {
         console.log('Pomyślnie dodano słowo!');
+        this.calculateProgress(id, newWord.folderId);
       });
+
   }
+
+  //UTILS - CALCULATE PROGRESS
+  calculateProgress = (userId: string, folderId: number) => {
+    this.userModel.findById(userId).then((res: IUser) => {
+      let currentProgress = 0;
+      console.log(res.folders[folderId].words);
+      res.folders[folderId].words.map((word) => {
+        if (word.known === 2) {
+          currentProgress++;
+        } else if (word.known === 1) {
+          currentProgress += 0.5;
+        }
+      });
+      this.userModel
+        .findByIdAndUpdate(
+          userId,
+          {
+            $set: {
+              'folders.$[item].maxProgress': res.folders[folderId].words.length,
+              'folders.$[item].currentProgress': currentProgress,
+            },
+          },
+          {
+            new: true,
+            arrayFilters: [{ 'item.id': { $in: folderId } }],
+          },
+        )
+        .then(() => {
+          console.log('Zaaktualizowano progress!');
+        });
+    });
+  };
 
   createUserFolderWords(id: string, newWords: CreateWordDto[]) {
     this.userModel
@@ -62,10 +95,14 @@ export class UserService {
             },
           },
         },
-        { arrayFilters: [{ 'item.id': { $in: newWords[0].folderId } }] },
+        {
+          new: true,
+          arrayFilters: [{ 'item.id': { $in: newWords[0].folderId } }],
+        },
       )
       .then(() => {
         console.log('Pomyślnie dodano słowa!');
+        this.calculateProgress(id, newWords[0].folderId);
       });
   }
 
@@ -90,7 +127,7 @@ export class UserService {
         },
       )
       .then(() => {
-        console.log('Pomyślnie zmieniono status!');
+        this.calculateProgress(id, newWordDto.folderId);
       })
       .catch((err) => {
         console.log('BLAD:', err);
@@ -108,13 +145,10 @@ export class UserService {
       )
       .then(() => {
         console.log('Pomyślnie usnieto słowo!');
+        this.calculateProgress(id, wordToDelete.folderId);
       })
       .catch((err) => {
         console.log(err);
       });
   }
 }
-
-// {_id: "class_a", students: {$elemMatch: {_id: {$in: ["1a", "1b"]}}}},
-// {$push: {"students.$[item].grades": "A+"}},
-// {arrayFilters: [{"item._id": {$in: ["1a", "1b"]}}], upsert: true}

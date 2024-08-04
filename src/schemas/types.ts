@@ -13,6 +13,8 @@ export interface IFolder {
   id: number;
   folderName: string;
   words: IWord[];
+  currentProgress: number;
+  maxProgress: number;
 }
 
 export interface IUser {

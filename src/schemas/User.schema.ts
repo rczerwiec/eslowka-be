@@ -34,6 +34,12 @@ export class FolderSchemaDefinition {
 
   @Prop({ default: [] })
   words: [];
+
+  @Prop({ default: 0 })
+  currentProgress: number;
+
+  @Prop({ default: 0 })
+  maxProgress: number;
 }
 
 const FolderSchema = SchemaFactory.createForClass(FolderSchemaDefinition);

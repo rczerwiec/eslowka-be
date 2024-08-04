@@ -10,4 +10,10 @@ export class CreateFolderDto {
   folderName: string;
 
   words?: IWord[];
+
+  @IsNumber()
+  currentProgress: number;
+
+  @IsNumber()
+  maxProgress: number;
 }
