@@ -20,7 +20,9 @@ import { CreateWordDto } from './dto/Word.dto';
 export class UsersController {
   constructor(private usersService: UserService) {}
 
-  @Post()
+  //CREATE USER============================================================
+
+  @Post('/signup')
   @UsePipes(new ValidationPipe())
   createUsers(@Body() createUserDto: CreateUserDto) {
     console.log(createUserDto);
@@ -28,10 +30,10 @@ export class UsersController {
     return this.usersService.createUser(createUserDto);
   }
 
+  //GETTERS============================================================
+
   @Get(':id')
   async getUserById(@Param('id') id: string) {
-    const isValid = mongoose.Types.ObjectId.isValid(id);
-    if (!isValid) throw new HttpException(`User not found (valid id)`, 404);
 
     const findUser = await this.usersService.getUserById(id);
     if (!findUser) throw new HttpException('User not found', 404);
@@ -40,22 +42,16 @@ export class UsersController {
 
   @Get(':id/folders')
   async getUserFolders(@Param('id') id: string) {
-    const isValid = mongoose.Types.ObjectId.isValid(id);
-    if (!isValid) throw new HttpException(`User not found (valid id)`, 404);
-
     const findUser = await this.usersService.getUserById(id);
     if (!findUser) throw new HttpException('User not found', 404);
     return findUser.folders;
-  }
-  
+  } 
 
   @Get(':id/folders/:folderId/words')
   async getUserFolderWords(
     @Param('id') id: string,
     @Param('folderId') folderId: string,
   ) {
-    const isValid = mongoose.Types.ObjectId.isValid(id);
-    if (!isValid) throw new HttpException(`User not found (valid id)`, 404);
 
     const findUser = await this.usersService.getUserById(id);
     if (!findUser) throw new HttpException('User not found', 404);
@@ -70,8 +66,6 @@ export class UsersController {
     @Param('id') id: string,
     @Param('folderId') folderId: string,
   ) {
-    const isValid = mongoose.Types.ObjectId.isValid(id);
-    if (!isValid) throw new HttpException(`User not found (valid id)`, 404);
 
     const findUser = await this.usersService.getUserById(id);
     if (!findUser) throw new HttpException('User not found', 404);
@@ -94,6 +88,7 @@ export class UsersController {
       ];
     }
     let knownStatus = 0;
+    //ADD ONLY 3 WORDS WITH STATUS "KNOWN" TO LIST
     const newFolders = folderWords
       .filter((word) => {
         if (knownStatus >= 3 && word.known === 2) {
@@ -110,8 +105,10 @@ export class UsersController {
       .map((word) => {
         return word;
       });
-    return newFolders;
+    return newFolders.slice(0, 8);
   }
+
+  //PATCHING============================================================
 
   @Patch(':id')
   createUserFolder(
@@ -119,52 +116,43 @@ export class UsersController {
     @Body() newFolderDto: CreateFolderDto,
   ) {
     console.log(newFolderDto);
-    const isValid = mongoose.Types.ObjectId.isValid(id);
-    if (!isValid) throw new HttpException(`User not found (valid id)`, 404);
     return this.usersService.createUserFolder(id, newFolderDto);
   }
 
+  //UPDATE SINGLE WORD==================
   @Patch(':id/word')
   createUserFolderWord(
     @Param('id') id: string,
     @Body() newWordDto: CreateWordDto,
   ) {
-    console.log(newWordDto);
-    const isValid = mongoose.Types.ObjectId.isValid(id);
-    if (!isValid) throw new HttpException(`User not found (valid id)`, 404);
+    console.log(id); 
     if (newWordDto.word == '' || newWordDto.translation == '')
       throw new HttpException(`Empty data`, 999);
     return this.usersService.createUserFolderWord(id, newWordDto);
   }
 
-  @Patch(':id/word/status')
-  updateWord(@Param('id') id: string, @Body() newWordDto: CreateWordDto) {
-    console.log(newWordDto);
-    const isValid = mongoose.Types.ObjectId.isValid(id);
-    if (!isValid) throw new HttpException(`User not found (valid id)`, 404);
-    if (newWordDto.word == '' || newWordDto.translation == '')
-      throw new HttpException(`Empty data`, 999);
-    return this.usersService.updateWord(id, newWordDto);
-  }
-
+  //UPDATE WORDS==================
   @Patch(':id/words')
   createUserFolderWords(
     @Param('id') id: string,
     @Body() newWordsDto: CreateWordDto[],
   ) {
-    console.log(newWordsDto);
-    const isValid = mongoose.Types.ObjectId.isValid(id);
-    if (!isValid) throw new HttpException(`User not found (valid id)`, 404);
     return this.usersService.createUserFolderWords(id, newWordsDto);
   }
+
+  @Patch(':id/word/status')
+  updateWord(@Param('id') id: string, @Body() newWordDto: CreateWordDto) {
+    if (newWordDto.word == '' || newWordDto.translation == '')
+      throw new HttpException(`Empty data`, 999);
+    return this.usersService.updateWord(id, newWordDto);
+  }
+
 
   @Delete(':id/word')
   deleteUserFolderWord(
     @Param('id') id: string,
     @Body() wordToDelete: CreateWordDto,
   ) {
-    const isValid = mongoose.Types.ObjectId.isValid(id);
-    if (!isValid) throw new HttpException(`User not found (valid id)`, 404);
 
     return this.usersService.deleteUserFolderWord(id, wordToDelete);
   }

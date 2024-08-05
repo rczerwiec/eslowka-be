@@ -3,8 +3,10 @@ import { IFolder } from 'src/schemas/types';
 
 export class CreateUserDto {
   @IsNotEmpty()
-  @IsNumber()
-  id: number;
+  id: string;
+
+  @IsNotEmpty()
+  uid: string;
 
   @IsString()
   userName: string;

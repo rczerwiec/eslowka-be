@@ -12,42 +12,50 @@ import { IUser } from 'src/schemas/types';
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
+  //CREATE USER============================================================
   createUser(createUserDto: CreateUserDto) {
+    console.log('IM HERE');
     const newUser = new this.userModel(createUserDto);
 
     return newUser.save();
   }
 
+  //GETTERS============================================================
   getUserById(id: string) {
-    return this.userModel.findById(id);
+    return this.userModel.findOne({ uid: id });
   }
 
+
+  //PATCHING============================================================
   createUserFolder(id: string, newFolder: CreateFolderDto) {
-    console.log(newFolder);
+    //console.log(newFolder);
     this.userModel
-      .findByIdAndUpdate(id, { $push: { folders: newFolder } })
+      .updateOne({ uid: id }, { $push: { folders: newFolder } })
       .then(() => {
         console.log('Pomyślnie nadpisano folder!');
       });
   }
 
   createUserFolderWord(id: string, newWord: CreateWordDto) {
+    console.log(id, newWord);
     this.userModel
-      .findByIdAndUpdate(
-        id,
+      .updateOne(
+        { uid: id },
         { $push: { 'folders.$[item].words': newWord } },
         { arrayFilters: [{ 'item.id': { $in: newWord.folderId } }] },
       )
+      .catch((err) => {
+        console.log(err);
+      })
       .then(() => {
         console.log('Pomyślnie dodano słowo!');
         this.calculateProgress(id, newWord.folderId);
       });
-
   }
 
   //UTILS - CALCULATE PROGRESS
   calculateProgress = (userId: string, folderId: number) => {
-    this.userModel.findById(userId).then((res: IUser) => {
+    this.userModel.findOne({ uid: userId }).then((res: IUser) => {
       let currentProgress = 0;
       console.log(res.folders[folderId].words);
       res.folders[folderId].words.map((word) => {
@@ -58,8 +66,8 @@ export class UserService {
         }
       });
       this.userModel
-        .findByIdAndUpdate(
-          userId,
+        .updateOne(
+          { uid: userId },
           {
             $set: {
               'folders.$[item].maxProgress': res.folders[folderId].words.length,
@@ -73,14 +81,14 @@ export class UserService {
         )
         .then(() => {
           console.log('Zaaktualizowano progress!');
-        });
+        }); 
     });
   };
 
   createUserFolderWords(id: string, newWords: CreateWordDto[]) {
     this.userModel
-      .findByIdAndUpdate(
-        id,
+      .updateOne(
+        { uid: id },
         {
           $push: {
             'folders.$[item].words': {
@@ -106,10 +114,11 @@ export class UserService {
       });
   }
 
+  //UPDATE WORD
   updateWord(id: string, newWordDto: CreateWordDto) {
     this.userModel
-      .findByIdAndUpdate(
-        id,
+      .updateOne(
+        { uid: id },
         {
           $set: {
             'folders.$[e1].words.$[e2].known': newWordDto.known,
@@ -138,8 +147,8 @@ export class UserService {
     console.log(id, wordToDelete);
 
     this.userModel
-      .findByIdAndUpdate(
-        id,
+      .updateOne(
+        { uid: id },
         { $pull: { 'folders.$[item].words': wordToDelete } },
         { arrayFilters: [{ 'item.id': { $in: wordToDelete.folderId } }] },
       )

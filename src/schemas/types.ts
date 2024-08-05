@@ -18,7 +18,8 @@ export interface IFolder {
 }
 
 export interface IUser {
-  id: number;
+  uid: string;
+  id: string;
   userName: string;
   folders: IFolder[];
 }
