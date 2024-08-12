@@ -11,5 +11,8 @@ export class CreateUserDto {
   @IsString()
   userName: string;
 
+  @IsString()
+  email: string;
+
   folders?: IFolder[];
 }

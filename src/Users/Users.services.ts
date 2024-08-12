@@ -14,7 +14,6 @@ export class UserService {
 
   //CREATE USER============================================================
   createUser(createUserDto: CreateUserDto) {
-    console.log('IM HERE');
     const newUser = new this.userModel(createUserDto);
 
     return newUser.save();
@@ -115,7 +114,7 @@ export class UserService {
   }
 
   //UPDATE WORD
-  updateWord(id: string, newWordDto: CreateWordDto) {
+  updateWordStatusAndStreak(id: string, newWordDto: CreateWordDto) {
     this.userModel
       .updateOne(
         { uid: id },
@@ -138,6 +137,30 @@ export class UserService {
       .then(() => {
         this.calculateProgress(id, newWordDto.folderId);
       })
+      .catch((err) => {
+        console.log('BLAD:', err);
+      });
+  }
+
+  updateWordDetails(id: string, newWordDto: CreateWordDto) {
+    this.userModel
+      .updateOne(
+        { uid: id },
+        {
+          $set: {
+            'folders.$[e1].words.$[e2].word': newWordDto.word,
+            'folders.$[e1].words.$[e2].translation': newWordDto.translation,
+            'folders.$[e1].words.$[e2].note': newWordDto.note,
+          },
+        },
+        {
+          arrayFilters: [
+            { 'e1.id': newWordDto.folderId },
+            { 'e2.id': newWordDto.id },
+          ],
+          new: true,
+        },
+      )
       .catch((err) => {
         console.log('BLAD:', err);
       });

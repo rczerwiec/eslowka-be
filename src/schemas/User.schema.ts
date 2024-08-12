@@ -19,6 +19,8 @@ export class WordSchemaDefinition {
 
   reverseStreak: number;
 
+  note: string;
+
 }
 
 const WordSchema = SchemaFactory.createForClass(WordSchemaDefinition);
@@ -51,8 +53,11 @@ export class User {
   @Prop({ unique: false })
   uid: string;
 
-  @Prop({ required: true })
+  @Prop({ default: 'Użytkownik' })
   userName: string;
+
+  @Prop({ required: true })
+  email: string;
 
   @Prop([FolderSchema])
   folders: IFolder[];

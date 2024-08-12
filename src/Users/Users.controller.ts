@@ -47,6 +47,18 @@ export class UsersController {
     return findUser.folders;
   } 
 
+  @Get(':id/:folderId/:wordId')
+  async getSingleWord(
+    @Param('id') id: string,
+    @Param('folderId') folderId: string,
+    @Param('wordId') wordId: string,
+  ) {
+    const findUser = await this.usersService.getUserById(id);
+    if (!findUser) throw new HttpException('User not found', 404);
+    console.log(id, folderId, wordId);
+    return findUser.folders[folderId].words[wordId];
+  } 
+
   @Get(':id/folders/:folderId/words')
   async getUserFolderWords(
     @Param('id') id: string,
@@ -141,10 +153,24 @@ export class UsersController {
   }
 
   @Patch(':id/word/status')
-  updateWord(@Param('id') id: string, @Body() newWordDto: CreateWordDto) {
+  updateWordStatusAndStreak(
+    @Param('id') id: string,
+    @Body() newWordDto: CreateWordDto,
+  ) {
     if (newWordDto.word == '' || newWordDto.translation == '')
       throw new HttpException(`Empty data`, 999);
-    return this.usersService.updateWord(id, newWordDto);
+    return this.usersService.updateWordStatusAndStreak(id, newWordDto);
+  }
+
+  @Patch(':id/word/details')
+  updateWordDetails(
+    @Param('id') id: string,
+    @Body() newWordDto: CreateWordDto,
+  ) {
+    console.log("UpdateWordDetails");
+    if (newWordDto.word == '' || newWordDto.translation == '')
+      throw new HttpException(`Empty data`, 999);
+    return this.usersService.updateWordDetails(id, newWordDto);
   }
 
 

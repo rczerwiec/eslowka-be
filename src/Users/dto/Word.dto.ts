@@ -13,6 +13,9 @@ export class CreateWordDto {
   word: string;
 
   @IsString()
+  note: string;
+
+  @IsString()
   translation: string;
 
   @IsNumber()
