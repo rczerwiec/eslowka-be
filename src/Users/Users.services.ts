@@ -6,7 +6,7 @@ import { User } from 'src/schemas/User.schema';
 import { CreateUserDto } from './dto/User.dto';
 import { CreateFolderDto } from './dto/Folder.dto';
 import { CreateWordDto } from './dto/Word.dto';
-import { IUser } from 'src/schemas/types';
+import { IFolder, IUser } from 'src/schemas/types';
 
 @Injectable()
 export class UserService {
@@ -24,6 +24,85 @@ export class UserService {
     return this.userModel.findOne({ uid: id });
   }
 
+  async getWordsInFolder(id: string, folderId: number) {
+    console.log(folderId);
+    const test = await this.userModel
+      .findOne({ uid: id })
+      .then((res: IUser) => {
+        //console.log(res.folders);
+        const myFolder = res.folders.find((folder) => {
+          console.log(folder.id, folderId);
+          if (folder.id == folderId) {
+            console.log(
+              '----------------------------------------',
+              folder.id,
+              folderId,
+            );
+            return true;
+          }
+        });
+
+        return myFolder;
+      });
+    return test.words;
+  }
+
+  async getRandomWords(id: string, folderId: number) {
+    console.log(folderId);
+    const myFolderWords = await this.userModel
+      .findOne({ uid: id })
+      .then((res: IUser) => {
+        //console.log(res.folders);
+        const myFolder = res.folders.find((folder) => {
+          console.log(folder.id, folderId);
+          if (folder.id == folderId) {
+            console.log(
+              '----------------------------------------',
+              folder.id,
+              folderId,
+            );
+            return true;
+          }
+        });
+
+        return myFolder;
+      });
+    // eslint-disable-next-line prefer-const
+    console.log("myfolderWords",myFolderWords);
+    const folderWords = myFolderWords.words;
+    let currentIndex = folderWords.length;
+
+    while (currentIndex != 0) {
+      // Pick a remaining element...
+      const randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      // And swap it with the current element.
+      [folderWords[currentIndex], folderWords[randomIndex]] = [
+        folderWords[randomIndex],
+        folderWords[currentIndex],
+      ];
+    }
+    let knownStatus = 0;
+    //ADD ONLY 3 WORDS WITH STATUS "KNOWN" TO LIST
+    const newFolders = folderWords
+      .filter((word) => {
+        if (knownStatus >= 3 && word.known === 2) {
+          console.log('false');
+          return false;
+        } else {
+          if (word.known === 2) {
+            knownStatus++;
+          }
+          console.log('true');
+          return true;
+        }
+      })
+      .map((word) => {
+        return word;
+      });
+    return newFolders.slice(0, 8);
+  }
 
   //PATCHING============================================================
   createUserFolder(id: string, newFolder: CreateFolderDto) {
@@ -35,20 +114,22 @@ export class UserService {
       });
   }
 
-  createUserFolderWord(id: string, newWord: CreateWordDto) {
-    console.log(id, newWord);
+  createUserFolderWord(
+    id: string,
+    data: { newWord: CreateWordDto; folderId: number },
+  ) {
     this.userModel
       .updateOne(
         { uid: id },
-        { $push: { 'folders.$[item].words': newWord } },
-        { arrayFilters: [{ 'item.id': { $in: newWord.folderId } }] },
+        { $push: { 'folders.$[item].words': data.newWord } },
+        { arrayFilters: [{ 'item.id': { $in: data.newWord.folderId } }] },
       )
       .catch((err) => {
         console.log(err);
       })
       .then(() => {
         console.log('Pomyślnie dodano słowo!');
-        this.calculateProgress(id, newWord.folderId);
+        this.calculateProgress(id, data.folderId);
       });
   }
 
@@ -56,12 +137,17 @@ export class UserService {
   calculateProgress = (userId: string, folderId: number) => {
     this.userModel.findOne({ uid: userId }).then((res: IUser) => {
       let currentProgress = 0;
-      console.log(res.folders[folderId].words);
-      res.folders[folderId].words.map((word) => {
-        if (word.known === 2) {
-          currentProgress++;
-        } else if (word.known === 1) {
-          currentProgress += 0.5;
+      let currentFolder;
+      res.folders.find((folder) => {
+        if (folder.id == folderId) {
+          currentFolder = folder;
+          folder.words.map((word) => {
+            if (word.known === 2) {
+              currentProgress++;
+            } else if (word.known === 1) {
+              currentProgress += 0.5;
+            }
+          });
         }
       });
       this.userModel
@@ -69,7 +155,7 @@ export class UserService {
           { uid: userId },
           {
             $set: {
-              'folders.$[item].maxProgress': res.folders[folderId].words.length,
+              'folders.$[item].maxProgress': currentFolder.words.length,
               'folders.$[item].currentProgress': currentProgress,
             },
           },
@@ -80,7 +166,7 @@ export class UserService {
         )
         .then(() => {
           console.log('Zaaktualizowano progress!');
-        }); 
+        });
     });
   };
 
@@ -178,6 +264,20 @@ export class UserService {
       .then(() => {
         console.log('Pomyślnie usnieto słowo!');
         this.calculateProgress(id, wordToDelete.folderId);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  deleteUserFolder(id: string, folder: CreateFolderDto) {
+    console.log(id, folder);
+
+    this.userModel
+      // eslint-disable-next-line prettier/prettier
+      .updateOne({ uid: id }, { $pull: { "folders": {id: folder.id} } })
+      .then(() => {
+        console.log('Pomyślnie usunieto folder!');
       })
       .catch((err) => {
         console.log(err);

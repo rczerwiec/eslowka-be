@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { UserService } from './Users.services';
 import { CreateUserDto } from './dto/User.dto';
-import mongoose from 'mongoose';
 import { CreateFolderDto } from './dto/Folder.dto';
 import { CreateWordDto } from './dto/Word.dto';
 
@@ -34,7 +33,6 @@ export class UsersController {
 
   @Get(':id')
   async getUserById(@Param('id') id: string) {
-
     const findUser = await this.usersService.getUserById(id);
     if (!findUser) throw new HttpException('User not found', 404);
     return findUser;
@@ -45,7 +43,7 @@ export class UsersController {
     const findUser = await this.usersService.getUserById(id);
     if (!findUser) throw new HttpException('User not found', 404);
     return findUser.folders;
-  } 
+  }
 
   @Get(':id/:folderId/:wordId')
   async getSingleWord(
@@ -57,67 +55,27 @@ export class UsersController {
     if (!findUser) throw new HttpException('User not found', 404);
     console.log(id, folderId, wordId);
     return findUser.folders[folderId].words[wordId];
-  } 
+  }
 
   @Get(':id/folders/:folderId/words')
   async getUserFolderWords(
     @Param('id') id: string,
-    @Param('folderId') folderId: string,
+    @Param('folderId') folderId: number,
   ) {
-
-    const findUser = await this.usersService.getUserById(id);
-    if (!findUser) throw new HttpException('User not found', 404);
-    if (!findUser.folders[folderId].words === undefined) {
-      return [];
-    }
-    return findUser.folders[folderId].words;
+    const wordsInFolder = this.usersService.getWordsInFolder(id, folderId);
+    console.log(wordsInFolder);
+    return wordsInFolder;
   }
 
   @Get(':id/folders/:folderId/randomWords')
   async getRandomWordsArray(
     @Param('id') id: string,
-    @Param('folderId') folderId: string,
+    @Param('folderId') folderId: number,
   ) {
 
-    const findUser = await this.usersService.getUserById(id);
-    if (!findUser) throw new HttpException('User not found', 404);
-    if (!findUser.folders[folderId].words === undefined) {
-      return [];
-    }
-    // eslint-disable-next-line prefer-const
-    let folderWords = findUser.folders[folderId].words;
-    let currentIndex = folderWords.length;
-
-    while (currentIndex != 0) {
-      // Pick a remaining element...
-      const randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-
-      // And swap it with the current element.
-      [folderWords[currentIndex], folderWords[randomIndex]] = [
-        folderWords[randomIndex],
-        folderWords[currentIndex],
-      ];
-    }
-    let knownStatus = 0;
-    //ADD ONLY 3 WORDS WITH STATUS "KNOWN" TO LIST
-    const newFolders = folderWords
-      .filter((word) => {
-        if (knownStatus >= 3 && word.known === 2) {
-          console.log('false');
-          return false;
-        } else {
-          if (word.known === 2) {
-            knownStatus++;
-          }
-          console.log('true');
-          return true;
-        }
-      })
-      .map((word) => {
-        return word;
-      });
-    return newFolders.slice(0, 8);
+    const randomWordsInFolder = this.usersService.getRandomWords(id, folderId);
+    console.log('RANDOM WORDS:', randomWordsInFolder);
+    return randomWordsInFolder;
   }
 
   //PATCHING============================================================
@@ -135,10 +93,10 @@ export class UsersController {
   @Patch(':id/word')
   createUserFolderWord(
     @Param('id') id: string,
-    @Body() newWordDto: CreateWordDto,
+    @Body() newWordDto: { newWord: CreateWordDto; folderId: number },
   ) {
-    console.log(id); 
-    if (newWordDto.word == '' || newWordDto.translation == '')
+    console.log(newWordDto.newWord);
+    if (newWordDto.newWord.word == '' || newWordDto.newWord.translation == '')
       throw new HttpException(`Empty data`, 999);
     return this.usersService.createUserFolderWord(id, newWordDto);
   }
@@ -167,19 +125,25 @@ export class UsersController {
     @Param('id') id: string,
     @Body() newWordDto: CreateWordDto,
   ) {
-    console.log("UpdateWordDetails");
+    console.log('UpdateWordDetails');
     if (newWordDto.word == '' || newWordDto.translation == '')
       throw new HttpException(`Empty data`, 999);
     return this.usersService.updateWordDetails(id, newWordDto);
   }
-
 
   @Delete(':id/word')
   deleteUserFolderWord(
     @Param('id') id: string,
     @Body() wordToDelete: CreateWordDto,
   ) {
-
     return this.usersService.deleteUserFolderWord(id, wordToDelete);
+  }
+
+  @Delete(':id/folder')
+  deleteUserFolder(
+    @Param('id') id: string,
+    @Body() folderToDelete: CreateFolderDto,
+  ) {
+    return this.usersService.deleteUserFolder(id, folderToDelete);
   }
 }
