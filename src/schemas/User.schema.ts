@@ -1,29 +1,19 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IFolder, IWord } from './types';
+import { IFolder, ISettings, IWord } from './types';
 
-@Schema()
-export class WordSchemaDefinition {
-  id: number;
+@Schema({_id: false})
+export class SettingsSchemaDefinition {
+  @Prop({ required: true })
+  language: string;
 
-  folderId: number;
+  @Prop({ required: true })
+  darkmode: boolean;
 
-  word: string;
-
-  translation: string;
-
-  repeated: number;
-
-  known: number;
-
-  streak: number;
-
-  reverseStreak: number;
-
-  note: string;
-
+  @Prop({ required: true })
+  wordsPerTraining: number;
 }
 
-const WordSchema = SchemaFactory.createForClass(WordSchemaDefinition);
+const SettingsSchema = SchemaFactory.createForClass(SettingsSchemaDefinition);
 
 @Schema()
 export class FolderSchemaDefinition {
@@ -61,6 +51,16 @@ export class User {
 
   @Prop([FolderSchema])
   folders: IFolder[];
+
+  @Prop({
+    default: {
+      language: 'polish',
+      darkmode: false,
+      wordsPerTraining: 5,
+    },
+    type: SettingsSchema,
+  })
+  settings: ISettings;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

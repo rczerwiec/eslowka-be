@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { IFolder } from 'src/schemas/types';
+import { IFolder, ISettings } from 'src/schemas/types';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -15,4 +15,6 @@ export class CreateUserDto {
   email: string;
 
   folders?: IFolder[];
+
+  settings: ISettings;
 }

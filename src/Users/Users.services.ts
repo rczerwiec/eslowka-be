@@ -6,7 +6,7 @@ import { User } from 'src/schemas/User.schema';
 import { CreateUserDto } from './dto/User.dto';
 import { CreateFolderDto } from './dto/Folder.dto';
 import { CreateWordDto } from './dto/Word.dto';
-import { IFolder, IUser } from 'src/schemas/types';
+import { IFolder, ISettings, IUser } from 'src/schemas/types';
 
 @Injectable()
 export class UserService {
@@ -14,6 +14,7 @@ export class UserService {
 
   //CREATE USER============================================================
   createUser(createUserDto: CreateUserDto) {
+    console.log(createUserDto);
     const newUser = new this.userModel(createUserDto);
 
     return newUser.save();
@@ -49,10 +50,12 @@ export class UserService {
 
   async getRandomWords(id: string, folderId: number) {
     console.log(folderId);
+    let userWordsPerTraining = 0;
     const myFolderWords = await this.userModel
       .findOne({ uid: id })
       .then((res: IUser) => {
         //console.log(res.folders);
+        userWordsPerTraining = res.settings.wordsPerTraining;
         const myFolder = res.folders.find((folder) => {
           console.log(folder.id, folderId);
           if (folder.id == folderId) {
@@ -101,7 +104,7 @@ export class UserService {
       .map((word) => {
         return word;
       });
-    return newFolders.slice(0, 8);
+    return newFolders.slice(0, userWordsPerTraining);
   }
 
   //PATCHING============================================================
@@ -111,6 +114,15 @@ export class UserService {
       .updateOne({ uid: id }, { $push: { folders: newFolder } })
       .then(() => {
         console.log('Pomyślnie nadpisano folder!');
+      });
+  }
+
+  updateUserSettings(id: string, settingsToUpdate: ISettings) {
+    //console.log(newFolder);
+    this.userModel
+      .updateOne({ uid: id }, { $set: { settings: settingsToUpdate } })
+      .then(() => {
+        console.log('Pomyślnie nadpisano ustawienia!');
       });
   }
 

@@ -14,6 +14,7 @@ import { UserService } from './Users.services';
 import { CreateUserDto } from './dto/User.dto';
 import { CreateFolderDto } from './dto/Folder.dto';
 import { CreateWordDto } from './dto/Word.dto';
+import { ISettings } from 'src/schemas/types';
 
 @Controller('users')
 export class UsersController {
@@ -72,7 +73,6 @@ export class UsersController {
     @Param('id') id: string,
     @Param('folderId') folderId: number,
   ) {
-
     const randomWordsInFolder = this.usersService.getRandomWords(id, folderId);
     console.log('RANDOM WORDS:', randomWordsInFolder);
     return randomWordsInFolder;
@@ -87,6 +87,12 @@ export class UsersController {
   ) {
     console.log(newFolderDto);
     return this.usersService.createUserFolder(id, newFolderDto);
+  }
+
+  @Patch(':id/settings')
+  updateUserSettings(@Param('id') id: string, @Body() newSettings: ISettings) {
+    console.log(newSettings);
+    return this.usersService.updateUserSettings(id, newSettings);
   }
 
   //UPDATE SINGLE WORD==================

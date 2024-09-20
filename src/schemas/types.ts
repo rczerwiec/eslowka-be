@@ -24,4 +24,11 @@ export interface IUser {
   userName: string;
   email: string;
   folders: IFolder[];
+  settings: ISettings;
+}
+
+export interface ISettings {
+  language: string;
+  darkmode: boolean;
+  wordsPerTraining: number;
 }
