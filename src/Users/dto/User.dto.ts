@@ -17,4 +17,10 @@ export class CreateUserDto {
   folders?: IFolder[];
 
   settings: ISettings;
+
+  experience: number;
+
+  level: number;
+
+  streak: number;
 }

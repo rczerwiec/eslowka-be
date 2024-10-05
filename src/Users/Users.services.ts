@@ -6,10 +6,12 @@ import { User } from 'src/schemas/User.schema';
 import { CreateUserDto } from './dto/User.dto';
 import { CreateFolderDto } from './dto/Folder.dto';
 import { CreateWordDto } from './dto/Word.dto';
-import { IFolder, ISettings, IUser } from 'src/schemas/types';
+import { ISettings, IUser } from 'src/schemas/types';
+import GetLevels from 'src/utils/Levels';
 
 @Injectable()
 export class UserService {
+
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   //CREATE USER============================================================
@@ -23,6 +25,10 @@ export class UserService {
   //GETTERS============================================================
   getUserById(id: string) {
     return this.userModel.findOne({ uid: id });
+  }
+
+  getAllUsers() {
+    return this.userModel.find();
   }
 
   async getWordsInFolder(id: string, folderId: number) {
@@ -71,7 +77,7 @@ export class UserService {
         return myFolder;
       });
     // eslint-disable-next-line prefer-const
-    console.log("myfolderWords",myFolderWords);
+    console.log('myfolderWords', myFolderWords);
     const folderWords = myFolderWords.words;
     let currentIndex = folderWords.length;
 
@@ -123,6 +129,25 @@ export class UserService {
       .updateOne({ uid: id }, { $set: { settings: settingsToUpdate } })
       .then(() => {
         console.log('Pomyślnie nadpisano ustawienia!');
+      });
+  }
+
+  updateUserStats(id: string, experience: number) {
+    let currentlevel = 0;
+    const levels = GetLevels();
+    levels.map((level) => {
+      if (experience >= level.min && experience < level.max) {
+        currentlevel = level.value;
+      }
+    });
+
+    this.userModel
+      .updateOne(
+        { uid: id },
+        { $set: { experience: experience, level: currentlevel } },
+      )
+      .then(() => {
+        console.log('Pomyślnie nadpisano statystyki!');
       });
   }
 

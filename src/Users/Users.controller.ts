@@ -39,6 +39,14 @@ export class UsersController {
     return findUser;
   }
 
+  @Get()
+  async getUsers() {
+    console.log('IM HERE');
+    const allUsers = await this.usersService.getAllUsers();
+    console.log(allUsers);
+    return allUsers;
+  }
+
   @Get(':id/folders')
   async getUserFolders(@Param('id') id: string) {
     const findUser = await this.usersService.getUserById(id);
@@ -80,6 +88,20 @@ export class UsersController {
 
   //PATCHING============================================================
 
+  @Patch(':id/userStatsUpdate')
+  updateUserStats(
+    @Param('id') id: string,
+    @Body() data: { experience: number },
+  ) {
+    console.log('EXP W CONTROLERZE:', data);
+    return this.usersService.updateUserStats(id, data.experience);
+  }
+
+  // @Patch(':id/userInfoUpdate')
+  // updateUserInfo(@Param('id') id: string, @Body() newSettings: ISettings) {
+  //   return this.usersService.updateUserSettings(id, newSettings);
+  // }
+
   @Patch(':id')
   createUserFolder(
     @Param('id') id: string,
@@ -91,7 +113,7 @@ export class UsersController {
 
   @Patch(':id/settings')
   updateUserSettings(@Param('id') id: string, @Body() newSettings: ISettings) {
-    console.log(newSettings);
+    console.log(newSettings); 
     return this.usersService.updateUserSettings(id, newSettings);
   }
 

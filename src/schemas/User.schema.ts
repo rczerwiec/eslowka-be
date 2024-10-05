@@ -61,6 +61,15 @@ export class User {
     type: SettingsSchema,
   })
   settings: ISettings;
+
+  @Prop({ default: 0 })
+  experience: number;
+
+  @Prop({ default: 0 })
+  level: number;
+
+  @Prop({ default: 0 })
+  streak: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
