@@ -208,6 +208,7 @@ export class UserService {
   };
 
   createUserFolderWords(id: string, newWords: CreateWordDto[]) {
+    console.log("SŁOWA DO DODANIA:",newWords); 
     this.userModel
       .updateOne(
         { uid: id },
