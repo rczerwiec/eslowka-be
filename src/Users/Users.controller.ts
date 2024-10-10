@@ -14,7 +14,7 @@ import { UserService } from './Users.services';
 import { CreateUserDto } from './dto/User.dto';
 import { CreateFolderDto } from './dto/Folder.dto';
 import { CreateWordDto } from './dto/Word.dto';
-import { ISettings } from 'src/schemas/types';
+import { IDates, ISettings } from 'src/schemas/types';
 
 @Controller('users')
 export class UsersController {
@@ -25,7 +25,7 @@ export class UsersController {
   @Post('/signup')
   @UsePipes(new ValidationPipe())
   createUsers(@Body() createUserDto: CreateUserDto) {
-    console.log(createUserDto);
+   // console.log(createUserDto);
 
     return this.usersService.createUser(createUserDto);
   }
@@ -41,9 +41,9 @@ export class UsersController {
 
   @Get()
   async getUsers() {
-    console.log('IM HERE');
+    //console.log('IM HERE');
     const allUsers = await this.usersService.getAllUsers();
-    console.log(allUsers);
+    //console.log(allUsers);
     return allUsers;
   }
 
@@ -62,7 +62,7 @@ export class UsersController {
   ) {
     const findUser = await this.usersService.getUserById(id);
     if (!findUser) throw new HttpException('User not found', 404);
-    console.log(id, folderId, wordId);
+    //console.log(id, folderId, wordId);
     return findUser.folders[folderId].words[wordId];
   }
 
@@ -117,6 +117,18 @@ export class UsersController {
     return this.usersService.updateUserSettings(id, newSettings);
   }
 
+  @Patch(':id/userInfo')
+  updateUserInfo(@Param('id') id: string, @Body() data: { userName: string }) {
+    console.log(data.userName); 
+    return this.usersService.updateUserInfo(id, data.userName);
+  }
+
+  @Patch(':id/dates')
+  updateUserDates(@Param('id') id: string, @Body() dates: IDates) {
+    console.log("HERE I AM",dates)
+    return this.usersService.updateUserDates(id, dates);
+  }
+
   //UPDATE SINGLE WORD==================
   @Patch(':id/word')
   createUserFolderWord(
@@ -132,7 +144,7 @@ export class UsersController {
   //UPDATE WORDS==================
   @Patch(':id/words')
   createUserFolderWords(
-    @Param('id') id: string,
+    @Param('id') id: string, 
     @Body() newWordsDto: CreateWordDto[],
   ) {
     return this.usersService.createUserFolderWords(id, newWordsDto);

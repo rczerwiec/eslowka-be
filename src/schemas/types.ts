@@ -25,6 +25,12 @@ export interface IUser {
   email: string;
   folders: IFolder[];
   settings: ISettings;
+  experience: number;
+  level: number;
+  streak: number;
+  joined: Date;
+  lastLogin: Date; 
+  practiceDate: Date;
 }
 
 export interface ISettings {
@@ -32,3 +38,10 @@ export interface ISettings {
   darkmode: boolean;
   wordsPerTraining: number;
 }
+
+export interface IDates {
+  practiceDate: Date;
+  onLogin: boolean;
+  currentStreak: number;
+}
+

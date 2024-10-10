@@ -70,6 +70,15 @@ export class User {
 
   @Prop({ default: 0 })
   streak: number;
+
+  @Prop({ default: new Date() })
+  joined: Date;
+
+  @Prop({ default: new Date() })
+  lastLogin: Date;
+
+  @Prop({ default: new Date() })
+  practiceDate: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

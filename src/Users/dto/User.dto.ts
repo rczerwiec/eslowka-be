@@ -23,4 +23,10 @@ export class CreateUserDto {
   level: number;
 
   streak: number;
+
+  joined: Date;
+
+  lastLogin: Date;
+
+  practiceDate: Date;
 }
