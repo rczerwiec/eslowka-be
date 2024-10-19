@@ -68,7 +68,7 @@ export class User {
   @Prop({ default: 0 })
   level: number;
 
-  @Prop({ default: 0 })
+  @Prop({ default: 1 })
   streak: number;
 
   @Prop({ default: new Date() })

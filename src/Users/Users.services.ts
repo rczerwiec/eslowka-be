@@ -53,6 +53,21 @@ export class UserService {
     return test.words;
   }
 
+  async getSingleFolder(id: string, folderName: string) {
+    const selectedFolder = await this.userModel
+      .findOne({ uid: id })
+      .then((res: IUser) => {
+        const myFolder = res.folders.find((folder) => {
+          if (folder.folderName == folderName) {
+            return true;
+          }
+        });
+        return myFolder;
+      });
+    console.log('selected Folder', selectedFolder);
+    return selectedFolder;
+  }
+
   async getRandomWords(id: string, folderId: number) {
     console.log(folderId);
     let userWordsPerTraining = 0;
@@ -162,7 +177,7 @@ export class UserService {
     let lastLogin: Date;
     const today = new Date();
     const practiceDate: Date = new Date(dates.practiceDate);
-    console.log(dates)
+    console.log(dates);
     if (dates.onLogin) {
       lastLogin = new Date();
       this.userModel
@@ -175,19 +190,15 @@ export class UserService {
       console.log(practiceDate.getDate());
       console.log(today.getDate());
       //IF LAST PRACTICE DAY IS NOT TODAY
-      if (
-        practiceDate.getDate() != today.getDate()
-      ) {
+      if (practiceDate.getDate() != today.getDate()) {
         //CALCULATE DAY AFTER PRACTICE DAY
-        console.log("OSTATNIO CWICZONE:",practiceDate.getDate())
-        console.log("DZISIAJ", today.getDate());
+        console.log('OSTATNIO CWICZONE:', practiceDate.getDate());
+        console.log('DZISIAJ', today.getDate());
         const yesterdayDate = new Date(today);
         yesterdayDate.setDate(yesterdayDate.getDate() - 1);
         //IF PRACTICED YESTERDAY
-        if (
-          practiceDate.getDate() === yesterdayDate.getDate()
-        ) {
-          console.log("Wczoraj ćwiczyłeś");
+        if (practiceDate.getDate() === yesterdayDate.getDate()) {
+          console.log('Wczoraj ćwiczyłeś');
           this.userModel
             .updateOne(
               { uid: id },
@@ -202,7 +213,7 @@ export class UserService {
               console.log('Pomyślnie nadpisano date ćwiczeń!');
             });
         } else {
-          console.log("Wczoraj nie ćwiczyłeś");
+          console.log('Wczoraj nie ćwiczyłeś');
           this.userModel
             .updateOne(
               { uid: id },

@@ -66,6 +66,17 @@ export class UsersController {
     return findUser.folders[folderId].words[wordId];
   }
 
+  @Get(':id/:folderName')
+  async getSingleFolder(
+    @Param('id') id: string,
+    @Param('folderName') folderName: string,
+  ) {
+    const findUser = await this.usersService.getUserById(id);
+    if (!findUser) throw new HttpException('User not found', 404);
+    //console.log(id, folderId, wordId);
+    return this.usersService.getSingleFolder(id, folderName);
+  }
+
   @Get(':id/folders/:folderId/words')
   async getUserFolderWords(
     @Param('id') id: string,
