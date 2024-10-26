@@ -8,6 +8,7 @@ import { CreateFolderDto } from './dto/Folder.dto';
 import { CreateWordDto } from './dto/Word.dto';
 import { IDates, ISettings, IUser } from 'src/schemas/types';
 import GetLevels from 'src/utils/Levels';
+import { CreateStoryDto } from './dto/Story.dto';
 
 @Injectable()
 export class UserService {
@@ -134,6 +135,15 @@ export class UserService {
       .updateOne({ uid: id }, { $push: { folders: newFolder } })
       .then(() => {
         console.log('Pomyślnie nadpisano folder!');
+      });
+  }
+
+  createUserStory(id: string, newStory: CreateStoryDto) {
+    //console.log(newFolder);
+    this.userModel
+      .updateOne({ uid: id }, { $push: { stories: newStory } })
+      .then(() => {
+        console.log('Pomyślnie nadpisano historie!');
       });
   }
 

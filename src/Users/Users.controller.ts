@@ -15,6 +15,7 @@ import { CreateUserDto } from './dto/User.dto';
 import { CreateFolderDto } from './dto/Folder.dto';
 import { CreateWordDto } from './dto/Word.dto';
 import { IDates, ISettings } from 'src/schemas/types';
+import { CreateStoryDto } from './dto/Story.dto';
 
 @Controller('users')
 export class UsersController {
@@ -52,6 +53,13 @@ export class UsersController {
     const findUser = await this.usersService.getUserById(id);
     if (!findUser) throw new HttpException('User not found', 404);
     return findUser.folders;
+  }
+
+  @Get(':id/stories')
+  async getUserStories(@Param('id') id: string) {
+    const findUser = await this.usersService.getUserById(id);
+    if (!findUser) throw new HttpException('User not found', 404);
+    return findUser.stories;
   }
 
   @Get(':id/:folderId/:wordId')
@@ -120,6 +128,15 @@ export class UsersController {
   ) {
     console.log(newFolderDto);
     return this.usersService.createUserFolder(id, newFolderDto);
+  }
+
+  @Patch(':id/story')
+  createUserStory(
+    @Param('id') id: string,
+    @Body() newStoryDto: CreateStoryDto,
+  ) {
+    console.log(newStoryDto);
+    return this.usersService.createUserStory(id, newStoryDto);
   }
 
   @Patch(':id/settings')

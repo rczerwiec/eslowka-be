@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IFolder, ISettings, IWord } from './types';
+import { IFolder, ISettings, IStory, IWord } from './types';
 
 @Schema({_id: false})
 export class SettingsSchemaDefinition {
@@ -51,6 +51,30 @@ export class User {
 
   @Prop([FolderSchema])
   folders: IFolder[];
+
+  @Prop({
+    default: [
+      {
+        id: 0,
+        language: 'english',
+        level: 'b2',
+        title: 'Testowa b2',
+        words: [{ word: 'pieruny', known: false }],
+        wordAmount: 1,
+        wordKnownAmount: 0,
+      },
+      {
+        id: 1,
+        language: 'english',
+        level: 'a1',
+        title: 'Testowa a1',
+        words: [{ word: 'pierun', known: false }],
+        wordAmount: 1,
+        wordKnownAmount: 0,
+      },
+    ],
+  })
+  stories: IStory[];
 
   @Prop({
     default: {

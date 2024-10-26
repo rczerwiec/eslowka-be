@@ -29,7 +29,7 @@ export interface IUser {
   level: number;
   streak: number;
   joined: Date;
-  lastLogin: Date; 
+  lastLogin: Date;
   practiceDate: Date;
 }
 
@@ -45,3 +45,12 @@ export interface IDates {
   currentStreak: number;
 }
 
+export interface IStory {
+  id: number;
+  language: r ;
+  level: 'a1' | 'a2' | 'b1' | 'b2' | 'c1';
+  title: string;
+  words: { word: string; known: boolean }[];
+  wordAmount: number;
+  wordKnownAmount: number;
+}
