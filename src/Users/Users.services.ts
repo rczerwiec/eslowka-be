@@ -352,6 +352,48 @@ export class UserService {
       });
   }
 
+  //UPDATE WORD IN STORY
+  updateWordInStory(
+    id: string,
+    storyID: number,
+    wordInStoryID: number,
+    word: { id: number; word: string; known: number },
+  ) {
+    const wordID = parseInt(wordInStoryID.toString());
+    let knownStatus = 0;
+
+    if (word.known === 0) {
+      knownStatus = 1;
+    } else if (word.known === 1) {
+      knownStatus = 2;
+    } else if (word.known === 2) {
+      knownStatus = 3;
+    } else {
+      knownStatus = 0;
+    }
+
+
+    this.userModel
+      .updateOne(
+        { uid: id },
+        {
+          $set: {
+            'stories.$[e1].words.$[e2].known': knownStatus,
+          },
+        },
+        {
+          arrayFilters: [{ 'e1.id': storyID }, { 'e2.id': wordID }],
+          new: true,
+        },
+      )
+      .then((e) => {
+        console.log("Zaaktualizowano")
+      })
+      .catch((err) => {
+        console.log('BLAD:', err);
+      });
+  }
+
   updateWordDetails(id: string, newWordDto: CreateWordDto) {
     this.userModel
       .updateOne(

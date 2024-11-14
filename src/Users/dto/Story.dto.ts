@@ -6,15 +6,18 @@ export class CreateStoryDto {
   id: number;
 
   @IsString()
-  language: 'german' | 'english' | 'french';
+  language: string;
+  
+  @IsString()
+  level: string;
 
   @IsString()
-  level: 'a1' | 'a2' | 'b1' | 'b2' | 'c1';
+  description: string;
 
   @IsString()
   title: string;
 
-  words: { word: string; known: boolean }[];
+  words: { id: number; word: string; known: number }[];
 
   @IsNumber()
   wordAmount: number;

@@ -36,6 +36,35 @@ export class FolderSchemaDefinition {
 const FolderSchema = SchemaFactory.createForClass(FolderSchemaDefinition);
 
 @Schema()
+export class StorySchemaDefinition {
+  @Prop({ unique: false })
+  id: number;
+
+  @Prop({ required: true })
+  language: string;
+  
+  @Prop({ required: true })
+  level: string;
+
+  @Prop({ required: true })
+  description: string;
+
+  @Prop({ required: true })
+  title: string;
+
+  @Prop({ default: [] })
+  words: [];
+
+  @Prop({ default: 0 })
+  wordAmount: number;
+
+  @Prop({ default: 0 })
+  wordKnownAmount: number;
+}
+
+const StorySchema = SchemaFactory.createForClass(StorySchemaDefinition);
+
+@Schema()
 export class User {
   @Prop({ unique: false })
   id: string;
@@ -52,28 +81,7 @@ export class User {
   @Prop([FolderSchema])
   folders: IFolder[];
 
-  @Prop({
-    default: [
-      {
-        id: 0,
-        language: 'english',
-        level: 'b2',
-        title: 'Testowa b2',
-        words: [{ word: 'pieruny', known: false }],
-        wordAmount: 1,
-        wordKnownAmount: 0,
-      },
-      {
-        id: 1,
-        language: 'english',
-        level: 'a1',
-        title: 'Testowa a1',
-        words: [{ word: 'pierun', known: false }],
-        wordAmount: 1,
-        wordKnownAmount: 0,
-      },
-    ],
-  })
+  @Prop([StorySchema])
   stories: IStory[];
 
   @Prop({

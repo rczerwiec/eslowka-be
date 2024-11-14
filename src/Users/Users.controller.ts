@@ -141,7 +141,7 @@ export class UsersController {
 
   @Patch(':id/settings')
   updateUserSettings(@Param('id') id: string, @Body() newSettings: ISettings) {
-    console.log(newSettings); 
+    console.log(newSettings);
     return this.usersService.updateUserSettings(id, newSettings);
   }
 
@@ -186,6 +186,23 @@ export class UsersController {
     if (newWordDto.word == '' || newWordDto.translation == '')
       throw new HttpException(`Empty data`, 999);
     return this.usersService.updateWordStatusAndStreak(id, newWordDto);
+  }
+
+  @Patch(':id/story/:storyId/:storyWordId')
+  updateStoryWord(
+    @Param('id') id: string,
+    @Param('storyId') storyId: number,
+    @Param('storyWordId') storyWordId: number,
+    @Body() currentWord: { id: number; word: string; known: number },
+  ) {
+    console.log('STORYID:', storyId);
+    console.log('STORY WORD ID:', storyWordId);
+    return this.usersService.updateWordInStory(
+      id,
+      storyId,
+      storyWordId,
+      currentWord,
+    );
   }
 
   @Patch(':id/word/details')
