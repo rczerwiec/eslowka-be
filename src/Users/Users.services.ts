@@ -69,6 +69,21 @@ export class UserService {
     return selectedFolder;
   }
 
+  async getFolderByReferenceCode(id: string, referenceCode: string) {
+    const selectedFolder = await this.userModel
+      .findOne({ uid: id })
+      .then((res: IUser) => {
+        const myFolder = res.folders.find((folder) => {
+          if (folder.referenceID == referenceCode) {
+            return true;
+          }
+        });
+        return myFolder;
+      });
+    console.log('selected Folder', selectedFolder);
+    return selectedFolder;
+  }
+
   async getRandomWords(id: string, folderId: number) {
     console.log(folderId);
     let userWordsPerTraining = 0;
@@ -372,7 +387,6 @@ export class UserService {
       knownStatus = 0;
     }
 
-
     this.userModel
       .updateOne(
         { uid: id },
@@ -387,10 +401,48 @@ export class UserService {
         },
       )
       .then((e) => {
-        console.log("Zaaktualizowano")
+        console.log('Zaaktualizowano');
       })
       .catch((err) => {
         console.log('BLAD:', err);
+      });
+  }
+
+  updateDefaultVoice(id: string, folderId: string, voice: string) {
+    this.userModel
+      .updateOne(
+        { uid: id },
+        {
+          $set: {
+            'folders.$[item].defaultVoice': voice,
+          },
+        },
+        {
+          new: true,
+          arrayFilters: [{ 'item.id': { $in: folderId } }],
+        },
+      )
+      .then(() => {
+        console.log('Zaaktualizowano głos słówek DEFAULT!');
+      });
+  }
+
+  updateSecondaryVoice(id: string, folderId: string, voice: string) {
+    this.userModel
+      .updateOne(
+        { uid: id },
+        {
+          $set: {
+            'folders.$[item].defaultVoiceReversed': voice,
+          },
+        },
+        {
+          new: true,
+          arrayFilters: [{ 'item.id': { $in: folderId } }],
+        },
+      )
+      .then(() => {
+        console.log('Zaaktualizowano głos słówek SECONDARY!');
       });
   }
 

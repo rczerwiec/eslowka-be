@@ -31,6 +31,19 @@ export class FolderSchemaDefinition {
 
   @Prop({ default: 0 })
   maxProgress: number;
+
+  @Prop({
+    default: 'Microsoft Ryan Online (Natural) - English (United Kingdom)',
+  })
+  defaultVoice: string;
+
+  @Prop({
+    default: 'Microsoft Ryan Online (Natural) - English (United Kingdom)',
+  })
+  defaultVoiceReversed: string;
+
+  @Prop({ required: true })
+  referenceID: string;
 }
 
 const FolderSchema = SchemaFactory.createForClass(FolderSchemaDefinition);

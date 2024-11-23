@@ -16,6 +16,7 @@ export interface IFolder {
   words: IWord[];
   currentProgress: number;
   maxProgress: number;
+  referenceID: string;
 }
 
 export interface IUser {

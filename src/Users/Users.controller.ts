@@ -26,7 +26,7 @@ export class UsersController {
   @Post('/signup')
   @UsePipes(new ValidationPipe())
   createUsers(@Body() createUserDto: CreateUserDto) {
-   // console.log(createUserDto);
+    // console.log(createUserDto);
 
     return this.usersService.createUser(createUserDto);
   }
@@ -36,7 +36,7 @@ export class UsersController {
   @Get(':id')
   async getUserById(@Param('id') id: string) {
     const findUser = await this.usersService.getUserById(id);
-    if (!findUser) throw new HttpException('User not found', 404);
+    if (!findUser) throw new HttpException('User not found1', 404);
     return findUser;
   }
 
@@ -51,14 +51,14 @@ export class UsersController {
   @Get(':id/folders')
   async getUserFolders(@Param('id') id: string) {
     const findUser = await this.usersService.getUserById(id);
-    if (!findUser) throw new HttpException('User not found', 404);
+    if (!findUser) throw new HttpException('User not found2', 404);
     return findUser.folders;
   }
 
   @Get(':id/stories')
   async getUserStories(@Param('id') id: string) {
     const findUser = await this.usersService.getUserById(id);
-    if (!findUser) throw new HttpException('User not found', 404);
+    if (!findUser) throw new HttpException('User not found3', 404);
     return findUser.stories;
   }
 
@@ -69,7 +69,7 @@ export class UsersController {
     @Param('wordId') wordId: string,
   ) {
     const findUser = await this.usersService.getUserById(id);
-    if (!findUser) throw new HttpException('User not found', 404);
+    if (!findUser) throw new HttpException('User not found4', 404);
     //console.log(id, folderId, wordId);
     return findUser.folders[folderId].words[wordId];
   }
@@ -80,9 +80,22 @@ export class UsersController {
     @Param('folderName') folderName: string,
   ) {
     const findUser = await this.usersService.getUserById(id);
-    if (!findUser) throw new HttpException('User not found', 404);
+    if (!findUser) throw new HttpException('User not found5', 404);
     //console.log(id, folderId, wordId);
     return this.usersService.getSingleFolder(id, folderName);
+  }
+
+  @Get('getByReferenceCode/:referenceCode/referenceCode/reference')
+  async getFolderByReferenceCode(
+    @Param('referenceCode') referenceCode: string,
+  ) {
+    console.log("KOD REF:",referenceCode);
+    const userID = referenceCode.slice(0, -9);
+    const findUser = await this.usersService.getUserById(userID);
+    if (!findUser) throw new HttpException('User not foundXD', 404);
+    //console.log(id, folderId, wordId);
+    console.log(findUser);
+    return this.usersService.getFolderByReferenceCode(userID, referenceCode);
   }
 
   @Get(':id/folders/:folderId/words')
@@ -147,14 +160,31 @@ export class UsersController {
 
   @Patch(':id/userInfo')
   updateUserInfo(@Param('id') id: string, @Body() data: { userName: string }) {
-    console.log(data.userName); 
+    console.log(data.userName);
     return this.usersService.updateUserInfo(id, data.userName);
   }
 
   @Patch(':id/dates')
   updateUserDates(@Param('id') id: string, @Body() dates: IDates) {
-    console.log("HERE I AM",dates)
     return this.usersService.updateUserDates(id, dates);
+  }
+
+  @Patch(':id/:folderId/defaultVoice')
+  updateFolderDefaultVoice(
+    @Param('id') id: string,
+    @Param('folderId') folderID: string,
+    @Body() voice: { voice: string },
+  ) {
+    return this.usersService.updateDefaultVoice(id, folderID, voice.voice);
+  }
+
+  @Patch(':id/:folderId/secondaryVoice')
+  updateFolderSecondaryVoice(
+    @Param('id') id: string,
+    @Param('folderId') folderID: string,
+    @Body() voice: { voice: string },
+  ) {
+    return this.usersService.updateSecondaryVoice(id, folderID, voice.voice);
   }
 
   //UPDATE SINGLE WORD==================
@@ -172,7 +202,7 @@ export class UsersController {
   //UPDATE WORDS==================
   @Patch(':id/words')
   createUserFolderWords(
-    @Param('id') id: string, 
+    @Param('id') id: string,
     @Body() newWordsDto: CreateWordDto[],
   ) {
     return this.usersService.createUserFolderWords(id, newWordsDto);

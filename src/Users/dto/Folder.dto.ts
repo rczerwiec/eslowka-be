@@ -16,4 +16,15 @@ export class CreateFolderDto {
 
   @IsNumber()
   maxProgress: number;
+
+  @IsString()
+  defaultVoice: string;
+
+  @IsString()
+  defaultVoiceReversed: string;
+
+  @IsString()
+  referenceID: string;
+
 }
+  
