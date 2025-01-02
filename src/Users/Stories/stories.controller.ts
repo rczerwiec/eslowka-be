@@ -6,7 +6,7 @@ import {
   Param,
   Patch,
 } from '@nestjs/common';
-import { StoriesService } from './Stories.service';
+import { StoriesService } from './stories.service';
 import { UserService } from '../Users.services';
 import { CreateStoryDto } from '../dto/Story.dto';
 
