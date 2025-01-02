@@ -3,12 +3,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/schemas/User.schema';
 import { UserService } from './Users.services';
 import { UsersController } from './Users.controller';
-import { StoriesController } from './Stories/stories.controller';
-import { StoriesService } from './Stories/stories.service';
 import { SettingsService } from './Settings/settings.service';
 import { SettingsController } from './Settings/settings.controller';
 import { FoldersService } from './Folders/folders.service';
 import { FoldersController } from './Folders/folders.controller';
+import { StoriesController } from './Stories/Stories.controller';
+import { StoriesService } from './Stories/Stories.service';
 
 @Module({
   imports: [
