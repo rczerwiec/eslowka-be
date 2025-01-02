@@ -63,7 +63,7 @@ export class FoldersController {
     return wordsInFolder;
   }
 
-  //GET SINGLE WORD FROM FOLDER
+  //GET SINGLE WORD FROM FOLDER (NOT USED????)
   @Get(':id/:folderId/:wordId')
   async getSingleWord(
     @Param('id') id: string,
@@ -98,7 +98,7 @@ export class FoldersController {
   }
 
   //CREATE WORD IN FOLDER
-  @Patch(':id/word')
+  @Patch('/:id/word')
   createWordInFolder(
     @Param('id') id: string,
     @Body() newWordDto: { newWord: CreateWordDto; folderId: number },
@@ -131,16 +131,6 @@ export class FoldersController {
     );
   }
 
-  //UPDATE FOLDER NAME
-  @Patch(':id/:folderId/rename')
-  updateFolderName(
-    @Param('id') id: string,
-    @Param('folderId') folderID: string,
-    @Body() newName: { newName: string },
-  ) {
-    return this.folderService.updateFolderName(id, folderID, newName.newName);
-  }
-
   //UPDATE SECONDARY VOICE FOR FOLDER
   @Patch(':id/:folderId/secondaryVoice')
   updateFolderSecondaryVoice(
@@ -153,6 +143,16 @@ export class FoldersController {
       folderID,
       voice.voice,
     );
+  }
+
+  //UPDATE FOLDER NAME
+  @Patch(':id/:folderId/rename')
+  updateFolderName(
+    @Param('id') id: string,
+    @Param('folderId') folderID: string,
+    @Body() newName: { newName: string },
+  ) {
+    return this.folderService.updateFolderName(id, folderID, newName.newName);
   }
 
   //UPDATE WORD DETAILS
