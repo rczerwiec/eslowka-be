@@ -20,6 +20,8 @@ export class CreateUserDto {
 
   experience: number;
 
+  accountType: string;
+
   level: number;
 
   streak: number;

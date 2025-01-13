@@ -1,7 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IFolder, ISettings, IStory, IWord } from './types';
+import { IFolder, ISettings, IStory } from './types';
+import { randomUUID } from 'crypto';
+import GetStories from 'src/utils/DefaultData';
 
-@Schema({_id: false})
+@Schema({ _id: false })
 export class SettingsSchemaDefinition {
   @Prop({ required: true })
   language: string;
@@ -91,10 +93,62 @@ export class User {
   @Prop({ required: true })
   email: string;
 
-  @Prop([FolderSchema])
+  @Prop({
+    default: [
+      {
+        id: 0,
+        folderName: 'Domyślny Folder',
+        words: [
+          {
+            id: 0,
+            folderId: 0,
+            word: 'One',
+            translation: 'Jeden',
+            note: 'tłumaczenie liczby 1',
+            repeated: 0,
+            known: 0,
+            streak: 0,
+            reverseStreak: 0,
+          },
+          {
+            id: 1,
+            folderId: 0,
+            word: 'Two',
+            translation: 'Dwa',
+            note: 'tłumaczenie liczby dwa',
+            repeated: 0,
+            known: 0,
+            streak: 0,
+            reverseStreak: 0,
+          },
+          {
+            id: 2,
+            folderId: 0,
+            word: 'Three',
+            translation: 'Trzy',
+            note: 'tłumaczenie liczby trzy',
+            repeated: 0,
+            known: 0,
+            streak: 0,
+            reverseStreak: 0,
+          },
+        ],
+        currentProgress: 0,
+        maxProgress: 0,
+        referenceID: randomUUID(),
+        defaultVoice:
+          'Microsoft Ryan Online (Natural) - English (United Kingdom)',
+        defaultVoiceReversed: 'Microsoft Paulina - Polish (Poland)',
+      },
+    ],
+    type: [FolderSchema],
+  })
   folders: IFolder[];
 
-  @Prop([StorySchema])
+  @Prop({
+    default: GetStories(),
+    type: [StorySchema],
+  })
   stories: IStory[];
 
   @Prop({
@@ -112,6 +166,9 @@ export class User {
 
   @Prop({ default: 0 })
   level: number;
+
+  @Prop({ default: 'Free' })
+  accountType: string;
 
   @Prop({ default: 1 })
   streak: number;
