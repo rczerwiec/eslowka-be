@@ -16,6 +16,18 @@ export class StoriesService {
       });
   }
 
+  removeStory(id: string, storyToDelete: CreateStoryDto) {
+    this.userModel
+      // eslint-disable-next-line prettier/prettier
+      .updateOne({ uid: id }, { $pull: { stories: { id: storyToDelete.id } } })
+      .then(() => {
+        console.log('Pomyślnie usunieto historyjke!');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   updateWordInStory(
     id: string,
     storyID: number,
@@ -55,5 +67,4 @@ export class StoriesService {
         console.log('BLAD:', err);
       });
   }
-
 }

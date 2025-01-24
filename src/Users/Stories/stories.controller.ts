@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   Param,
@@ -29,6 +30,12 @@ export class StoriesController {
   @Patch(':id/story')
   createStory(@Param('id') id: string, @Body() newStoryDto: CreateStoryDto) {
     return this.storiesService.createStory(id, newStoryDto);
+  }
+
+  //REMOVE A STORY
+  @Delete(':id/story')
+  removeStory(@Param('id') id: string, @Body() storyToDelete: CreateStoryDto) {
+    return this.storiesService.removeStory(id, storyToDelete);
   }
 
   //UPDATE SINGLE WORD IN STORY
