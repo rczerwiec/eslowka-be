@@ -13,6 +13,7 @@ import { PreauthMiddleware } from './auth/preauth.middleware';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env', 
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
