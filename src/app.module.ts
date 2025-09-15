@@ -5,12 +5,22 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './Users/Users.module';
 import { PreauthMiddleware } from './auth/preauth.middleware';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/eslowka'),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get<string>('DATABASE_URI') || 'mongodb://localhost:27017/eslowka', // Dodaj fallback
+      }),
+      inject: [ConfigService],
+    }),
     UserModule,
   ],
 })
